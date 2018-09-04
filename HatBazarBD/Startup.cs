@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using HatBazarBD.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -11,9 +9,14 @@ namespace HatBazarBD
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration,
+            IHostingEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            _configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
@@ -21,7 +24,14 @@ namespace HatBazarBD
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCustomizedDataStore(_configuration);
+            services.AddCustomAuthentication();
+            services.InjectApplicationServices();
+
+            services.AddAutoMapper();
+
             services.AddMvc();
+            services.RegisterGzip();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,8 +47,9 @@ namespace HatBazarBD
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseResponseCompression();
             app.UseStaticFiles();
-
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

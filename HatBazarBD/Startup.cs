@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
+using DAL.Data;
+using DAL.User;
 using HatBazarBD.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,23 +16,36 @@ namespace HatBazarBD
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IConfiguration _configuration;
 
-        public Startup(IConfiguration configuration,
-            IHostingEnvironment hostingEnvironment)
+        public Startup(IHostingEnvironment hostingEnvironment)
         {
-            _configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(hostingEnvironment.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
+
+
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCustomizedDataStore(_configuration);
+            
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+
+
+
             services.AddCustomAuthentication();
             services.InjectApplicationServices();
 
-            services.AddAutoMapper();
+            //services.AddAutoMapper();
 
             services.AddMvc();
             services.RegisterGzip();

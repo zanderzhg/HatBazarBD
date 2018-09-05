@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using DAL.Repository;
 using Microsoft.AspNetCore.Mvc;
 using HatBazarBD.Models;
 
@@ -10,6 +11,14 @@ namespace HatBazarBD.Controllers
 {
     public class HomeController : Controller
     {
+
+        private readonly IUnitOfWork _unitOfWork;
+
+        public HomeController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         public IActionResult Index()
         {
             return View();

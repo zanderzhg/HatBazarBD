@@ -26,12 +26,7 @@ namespace HatBazarBD.Services
             return services;
         }
 
-        public static IServiceCollection AddCustomizedDataStore(this IServiceCollection services,IConfiguration configuration)
-        {
-            services.AddDbContextPool<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DeafultConnection"), b => b.MigrationsAssembly("HatBazar")));
-            return services;
-        }
+        
 
         public static IServiceCollection AddCustomAuthentication(this IServiceCollection services)
         {

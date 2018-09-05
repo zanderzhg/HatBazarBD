@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DAL.User;
 
 namespace DAL.Data
 {
@@ -10,8 +11,7 @@ namespace DAL.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
-        {
-        }
+        { }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -24,5 +24,8 @@ namespace DAL.Data
             base.OnModelCreating(builder);
 
         }
+
+        public DbSet<ApplicationUser> ApplicationUser;
+        public DbSet<ApplicationRole> ApplicationRole;
     }
 }
